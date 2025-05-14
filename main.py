@@ -5,7 +5,7 @@ import uvicorn
 
 from data import produto_repo
 from data import cliente_repo
-
+from data import categoria_repo
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -13,6 +13,7 @@ templates = Jinja2Templates(directory="templates")
 
 produto_repo.criar_tabela()
 cliente_repo.criar_tabela()
+categoria_repo.criar_tabela()
 
 
 @app.get("/")
@@ -34,8 +35,13 @@ async def get_produtos():
     response = templates.TemplateResponse("produtos.html", {"request": {}, "produtos": produtos})
     return response
 
+@app.get("/categorias")
+async def get_categorias():
+    categorias = categoria_repo.obter_todos()
+    response = templates.TemplateResponse("categorias.html", {"request": {}, "categorias": categorias})
+    return response
+
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="127.0.0.1", port=8000, reload=True)
 
-    
